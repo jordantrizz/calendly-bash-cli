@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.4] - 2025-12-12
+
+### Added
+- New `webhooks test` command to send test webhook payloads to a URL
+- Simulates Calendly's webhook payload structure for testing webhook receivers
+- Supports `--url` (required) and `--event` (optional, defaults to `invitee.created`) options
+- Test payloads include realistic data structure matching Calendly's documented format
+
 ## [0.2.3] - 2025-12-12
 
 ### Fixed
