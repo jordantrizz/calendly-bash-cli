@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.3] - 2025-12-12
+
+### Fixed
+- Debug output now displays correctly when using `-ddd` flag
+- Removed `2>&1` stderr capture in `verify_auth()` that was swallowing debug messages
+
 ## [0.1.2] - 2025-12-12
 
 ### Added

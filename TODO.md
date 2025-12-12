@@ -1,9 +1,5 @@
 # TODO
 
-## Release 0.1.2
-* [x] Add in -ddd which also outputs curl commands for reproducing requests and curl responses.
-* [x] Debug messages should be cyan in color and be prefixed with [DEBUG]
-
 ## Release 0.2.0
 - [ ] Implement command-line interface for user interaction
 - [ ] Test basic API interactions

@@ -1,6 +1,6 @@
 #!/bin/bash
 # calendly - A bash CLI for interacting with the Calendly API
-# Version: 0.1.2
+# Version: 0.1.3
 
 set -e
 
@@ -13,7 +13,7 @@ source "$SCRIPT_DIR/lib/api.sh"
 source "$SCRIPT_DIR/lib/auth.sh"
 
 # Version
-VERSION="0.1.2"
+VERSION="0.1.3"
 
 # Check for required dependencies
 check_dependencies() {
