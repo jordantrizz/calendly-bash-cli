@@ -1,9 +1,8 @@
 # TODO
-## Release 0.1.0
-- [x] Set up project structure and initial files
-- [x] Implement authentication with Calendly API
-- [x] Create functions for API requests
-- [x] API key stored in environment variable CALENDLY_API_KEY or ~/.calendly
+
+## Release 0.1.1
+- [x] Add in debugging/logging functionality
+- [x] For .calendly config file, support additional config options (e.g., API base URL), the API Token should be CALENDLY_API_KEY= in the config file
 
 ## Release 0.2.0
 - [ ] Implement command-line interface for user interaction

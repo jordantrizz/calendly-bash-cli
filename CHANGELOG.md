@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2025-12-12
+
+### Added
+- Debug/logging functionality with `-d` flag (basic debug) and `-dd` flag (verbose with masked tokens)
+- New `lib/logging.sh` with `debug()`, `debug_verbose()`, `log_info()`, `log_error()`, `log_warn()` functions
+- Token masking function `mask_token()` that shows only first 4 characters
+- Config file permission check with warning for insecure permissions
+- Support for `CALENDLY_DEBUG` config option (0, 1, or 2)
+
+### Changed
+- Config file format now uses `KEY=value` syntax (e.g., `CALENDLY_API_KEY=your_token`)
+- API base URL can now be configured via `CALENDLY_API_BASE` in config or environment
+- Updated help message with new options and config file documentation
+- Improved error messages using logging functions
+
+### Fixed
+- API base URL is now configurable instead of hardcoded
+
 ## [0.1.0] - 2025-12-12
 
 ### Added

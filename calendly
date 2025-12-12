@@ -1,18 +1,19 @@
 #!/bin/bash
 # calendly - A bash CLI for interacting with the Calendly API
-# Version: 0.1.0
+# Version: 0.1.1
 
 set -e
 
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Source library files
+# Source library files (logging first for debug functions)
+source "$SCRIPT_DIR/lib/logging.sh"
 source "$SCRIPT_DIR/lib/api.sh"
 source "$SCRIPT_DIR/lib/auth.sh"
 
 # Version
-VERSION="0.1.0"
+VERSION="0.1.1"
 
 # Check for required dependencies
 check_dependencies() {
@@ -41,7 +42,13 @@ calendly - Calendly CLI v${VERSION}
 A bash script for interacting with the Calendly API.
 
 USAGE:
-    calendly <command> [options]
+    calendly [options] <command> [arguments]
+
+OPTIONS:
+    -d              Enable debug output
+    -dd             Enable verbose debug output (masks tokens)
+    -h, --help      Show this help message
+    -v, --version   Show version information
 
 COMMANDS:
     auth test       Test authentication by verifying API key
@@ -52,14 +59,21 @@ COMMANDS:
 AUTHENTICATION:
     Set your Calendly API key using one of these methods:
     1. Environment variable: export CALENDLY_API_KEY="your_api_key"
-    2. Config file: echo "your_api_key" > ~/.calendly
+    2. Config file: Add CALENDLY_API_KEY=your_api_key to ~/.calendly
 
     Generate a Personal Access Token at:
     https://calendly.com/integrations/api_webhooks
 
+CONFIG FILE (~/.calendly):
+    CALENDLY_API_KEY=your_api_key
+    CALENDLY_API_BASE=https://api.calendly.com  (optional)
+    CALENDLY_DEBUG=0                             (optional: 0, 1, or 2)
+
 EXAMPLES:
     calendly auth test       # Verify your API key works
     calendly auth user       # Display your user information
+    calendly -d auth test    # Test with debug output
+    calendly -dd auth test   # Test with verbose debug (masked tokens)
 
 EOF
 }
@@ -105,17 +119,49 @@ main() {
     # Check dependencies first
     check_dependencies
     
+    # Parse global options first (before command)
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -dd)
+                set_debug_level 2
+                debug "Verbose debug mode enabled (tokens will be masked)"
+                shift
+                ;;
+            -d)
+                set_debug_level 1
+                debug "Debug mode enabled"
+                shift
+                ;;
+            -v|--version)
+                show_version
+                exit 0
+                ;;
+            -h|--help)
+                show_help
+                exit 0
+                ;;
+            -*)
+                echo "Unknown option: $1" >&2
+                echo "Run 'calendly help' for usage information." >&2
+                exit 1
+                ;;
+            *)
+                break
+                ;;
+        esac
+    done
+    
     # Parse command
     local command="${1:-help}"
     shift || true
     
     # Handle version and help without auth
     case "$command" in
-        version|--version|-v)
+        version)
             show_version
             exit 0
             ;;
-        help|--help|-h)
+        help)
             show_help
             exit 0
             ;;

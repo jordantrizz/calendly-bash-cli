@@ -1,8 +1,9 @@
 #!/bin/bash
 # api.sh - Core API request functions for Calendly CLI
 
-# Calendly API base URL
-CALENDLY_API_BASE="https://api.calendly.com"
+# Default Calendly API base URL (can be overridden by config)
+# Note: CALENDLY_API_BASE is set by load_api_key() from config or defaults to this
+: "${CALENDLY_API_BASE:=https://api.calendly.com}"
 
 # Make an API request to Calendly
 # Usage: calendly_api METHOD ENDPOINT [DATA]
@@ -14,19 +15,24 @@ calendly_api() {
     local data="$3"
     
     if [[ -z "$API_KEY" ]]; then
-        echo "Error: API_KEY not set. Call load_api_key first." >&2
+        log_error "API_KEY not set. Call load_api_key first."
         return 1
     fi
     
     if [[ -z "$method" ]] || [[ -z "$endpoint" ]]; then
-        echo "Error: Method and endpoint are required" >&2
+        log_error "Method and endpoint are required"
         return 1
     fi
+    
+    local full_url="${CALENDLY_API_BASE}${endpoint}"
+    
+    # Debug output for API call
+    debug_api "$method" "$full_url" "$data"
     
     local curl_args=(
         -s
         -X "$method"
-        "${CALENDLY_API_BASE}${endpoint}"
+        "$full_url"
         -H "Authorization: Bearer $API_KEY"
         -H "Content-Type: application/json"
     )
@@ -36,7 +42,13 @@ calendly_api() {
         curl_args+=(-d "$data")
     fi
     
-    curl "${curl_args[@]}"
+    local response
+    response=$(curl "${curl_args[@]}")
+    
+    # Debug output for response
+    debug_api_response "$response"
+    
+    echo "$response"
 }
 
 # Make a paginated API request and return all results
