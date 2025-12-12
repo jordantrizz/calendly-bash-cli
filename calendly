@@ -1,6 +1,6 @@
 #!/bin/bash
 # calendly - A bash CLI for interacting with the Calendly API
-# Version: 0.1.1
+# Version: 0.1.2
 
 set -e
 
@@ -13,7 +13,7 @@ source "$SCRIPT_DIR/lib/api.sh"
 source "$SCRIPT_DIR/lib/auth.sh"
 
 # Version
-VERSION="0.1.1"
+VERSION="0.1.2"
 
 # Check for required dependencies
 check_dependencies() {
@@ -47,6 +47,7 @@ USAGE:
 OPTIONS:
     -d              Enable debug output
     -dd             Enable verbose debug output (masks tokens)
+    -ddd            Enable curl command debug (shows curl commands and raw responses)
     -h, --help      Show this help message
     -v, --version   Show version information
 
@@ -67,13 +68,14 @@ AUTHENTICATION:
 CONFIG FILE (~/.calendly):
     CALENDLY_API_KEY=your_api_key
     CALENDLY_API_BASE=https://api.calendly.com  (optional)
-    CALENDLY_DEBUG=0                             (optional: 0, 1, or 2)
+    CALENDLY_DEBUG=0                             (optional: 0, 1, 2, or 3)
 
 EXAMPLES:
     calendly auth test       # Verify your API key works
     calendly auth user       # Display your user information
     calendly -d auth test    # Test with debug output
     calendly -dd auth test   # Test with verbose debug (masked tokens)
+    calendly -ddd auth test  # Test with curl command output
 
 EOF
 }
@@ -122,6 +124,11 @@ main() {
     # Parse global options first (before command)
     while [[ $# -gt 0 ]]; do
         case "$1" in
+            -ddd)
+                set_debug_level 3
+                debug "Curl command debug mode enabled (shows curl commands and raw responses)"
+                shift
+                ;;
             -dd)
                 set_debug_level 2
                 debug "Verbose debug mode enabled (tokens will be masked)"

@@ -29,6 +29,9 @@ calendly_api() {
     # Debug output for API call
     debug_api "$method" "$full_url" "$data"
     
+    # Debug level 3: output reproducible curl command
+    debug_curl_command "$method" "$full_url" "$API_KEY" "$data"
+    
     local curl_args=(
         -s
         -X "$method"
@@ -47,6 +50,9 @@ calendly_api() {
     
     # Debug output for response
     debug_api_response "$response"
+    
+    # Debug level 3: output raw curl response
+    debug_curl_response "$response"
     
     echo "$response"
 }

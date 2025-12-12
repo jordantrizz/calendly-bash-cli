@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2025-12-12
+
+### Added
+- New `-ddd` flag for curl command debug output
+- Reproducible curl command output with masked tokens at debug level 3
+- Raw curl response output at debug level 3
+- New `debug_curl()`, `debug_curl_command()`, `debug_curl_response()` functions in `lib/logging.sh`
+
+### Changed
+- All debug messages now display `[DEBUG]` prefix in cyan color
+- Updated help message with `-ddd` option and examples
+- `CALENDLY_DEBUG` config option now supports values 0, 1, 2, or 3
+
 ## [0.1.1] - 2025-12-12
 
 ### Added

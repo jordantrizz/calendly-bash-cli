@@ -1,10 +1,15 @@
 #!/bin/bash
 # logging.sh - Logging and debug functions for Calendly CLI
 
+# Color codes for terminal output
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
 # Debug levels:
 # 0 = off (default)
 # 1 = basic debug output (-d)
 # 2 = verbose debug with masked tokens (-dd)
+# 3 = curl command debug with raw responses (-ddd)
 DEBUG_LEVEL="${DEBUG_LEVEL:-0}"
 
 # Set debug level
@@ -29,7 +34,7 @@ mask_token() {
 # Usage: debug "message"
 debug() {
     if [[ "$DEBUG_LEVEL" -ge 1 ]]; then
-        echo "[DEBUG] $*" >&2
+        echo -e "${CYAN}[DEBUG]${NC} $*" >&2
     fi
 }
 
@@ -37,7 +42,15 @@ debug() {
 # Usage: debug_verbose "message"
 debug_verbose() {
     if [[ "$DEBUG_LEVEL" -ge 2 ]]; then
-        echo "[DEBUG] $*" >&2
+        echo -e "${CYAN}[DEBUG]${NC} $*" >&2
+    fi
+}
+
+# Curl command debug output (only shown when DEBUG_LEVEL >= 3)
+# Usage: debug_curl "message"
+debug_curl() {
+    if [[ "$DEBUG_LEVEL" -ge 3 ]]; then
+        echo -e "${CYAN}[DEBUG]${NC} $*" >&2
     fi
 }
 
@@ -63,6 +76,41 @@ debug_api_response() {
     
     if [[ "$DEBUG_LEVEL" -ge 2 ]]; then
         debug_verbose "API Response: $response"
+    fi
+}
+
+# Output a reproducible curl command (only shown when DEBUG_LEVEL >= 3)
+# Usage: debug_curl_command METHOD URL API_KEY [DATA]
+debug_curl_command() {
+    local method="$1"
+    local url="$2"
+    local api_key="$3"
+    local data="$4"
+    
+    if [[ "$DEBUG_LEVEL" -ge 3 ]]; then
+        local masked_token
+        masked_token=$(mask_token "$api_key")
+        
+        local curl_cmd="curl -s -X $method '$url'"
+        curl_cmd+=" -H 'Authorization: Bearer $masked_token'"
+        curl_cmd+=" -H 'Content-Type: application/json'"
+        if [[ -n "$data" ]]; then
+            curl_cmd+=" -d '$data'"
+        fi
+        
+        debug_curl "Reproducible curl command (token masked):"
+        debug_curl "$curl_cmd"
+    fi
+}
+
+# Output raw curl response (only shown when DEBUG_LEVEL >= 3)
+# Usage: debug_curl_response RESPONSE
+debug_curl_response() {
+    local response="$1"
+    
+    if [[ "$DEBUG_LEVEL" -ge 3 ]]; then
+        debug_curl "Raw curl response:"
+        debug_curl "$response"
     fi
 }
 

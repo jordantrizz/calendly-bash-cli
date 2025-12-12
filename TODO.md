@@ -1,8 +1,8 @@
 # TODO
 
-## Release 0.1.1
-- [x] Add in debugging/logging functionality
-- [x] For .calendly config file, support additional config options (e.g., API base URL), the API Token should be CALENDLY_API_KEY= in the config file
+## Release 0.1.2
+* [x] Add in -ddd which also outputs curl commands for reproducing requests and curl responses.
+* [x] Debug messages should be cyan in color and be prefixed with [DEBUG]
 
 ## Release 0.2.0
 - [ ] Implement command-line interface for user interaction
