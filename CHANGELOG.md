@@ -7,14 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.3] - 2025-12-12
 
-### Fixed
-- `webhooks list` now correctly displays webhooks (fixed URL encoding issue with trailing newline)
+### Added
+- New `webhooks test` command to send test webhook payloads to a URL
+- Simulates Calendly's webhook payload structure for testing webhook receivers
+- Supports `--url` (required) and `--event` (optional, defaults to `invitee.created`) options
+- Test payloads include realistic data structure matching Calendly's documented format
 
 ## [0.2.2] - 2025-12-12
 
 ### Added
 - New `webhooks events` command to list available webhook event types
 - Shows descriptions for each event: `invitee.created`, `invitee.canceled`, `routing_form_submission.created`
+### Fixed
+- `webhooks list` now correctly displays webhooks (fixed URL encoding issue with trailing newline)
 
 ## [0.2.1] - 2025-12-12
 
