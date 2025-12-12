@@ -1,6 +1,6 @@
 #!/bin/bash
 # calendly - A bash CLI for interacting with the Calendly API
-# Version: 0.1.2
+# Version: 0.2.0
 
 set -e
 
@@ -11,9 +11,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/logging.sh"
 source "$SCRIPT_DIR/lib/api.sh"
 source "$SCRIPT_DIR/lib/auth.sh"
+source "$SCRIPT_DIR/lib/events.sh"
+source "$SCRIPT_DIR/lib/webhooks.sh"
 
 # Version
-VERSION="0.1.2"
+VERSION="0.2.0"
 
 # Check for required dependencies
 check_dependencies() {
@@ -54,6 +56,12 @@ OPTIONS:
 COMMANDS:
     auth test       Test authentication by verifying API key
     auth user       Show current user information
+    events list     List scheduled events
+    events get      Get details of a specific event
+    events invitees List invitees for an event
+    webhooks list   List webhook subscriptions
+    webhooks create Create a new webhook subscription
+    webhooks delete Delete a webhook subscription
     version         Show version information
     help            Show this help message
 
@@ -73,9 +81,11 @@ CONFIG FILE (~/.calendly):
 EXAMPLES:
     calendly auth test       # Verify your API key works
     calendly auth user       # Display your user information
+    calendly events list     # List your scheduled events
+    calendly events get UUID # Get event details
+    calendly webhooks list   # List webhook subscriptions
+    calendly webhooks create --url https://example.com/hook --events invitee.created
     calendly -d auth test    # Test with debug output
-    calendly -dd auth test   # Test with verbose debug (masked tokens)
-    calendly -ddd auth test  # Test with curl command output
 
 EOF
 }
@@ -181,6 +191,12 @@ main() {
     case "$command" in
         auth)
             cmd_auth "$@"
+            ;;
+        events)
+            cmd_events "$@"
+            ;;
+        webhooks)
+            cmd_webhooks "$@"
             ;;
         *)
             echo "Unknown command: $command" >&2

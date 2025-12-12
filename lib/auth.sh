@@ -90,7 +90,8 @@ load_api_key() {
 verify_auth() {
     debug "Verifying authentication..."
     local response
-    response=$(calendly_api GET "/users/me" 2>&1)
+    # Note: Don't capture stderr (2>&1) as it would swallow debug output
+    response=$(calendly_api GET "/users/me")
     local exit_code=$?
     
     if [[ $exit_code -ne 0 ]]; then
