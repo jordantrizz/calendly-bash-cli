@@ -1,0 +1,18 @@
+# Calendly CLI Configuration Example
+#
+# Copy this file to ~/.calendly (just the token, no comments):
+#   echo "YOUR_API_KEY" > ~/.calendly
+#
+# Or set the environment variable:
+#   export CALENDLY_API_KEY="YOUR_API_KEY"
+#
+# To generate a Personal Access Token:
+# 1. Log in to your Calendly account
+# 2. Go to Integrations → API & Webhooks
+# 3. Click "Generate New Token"
+# 4. Copy the token (it won't be shown again!)
+#
+# Direct link: https://calendly.com/integrations/api_webhooks
+#
+# Example ~/.calendly file contents (just the token on one line):
+# eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxN...

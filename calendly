@@ -1,0 +1,141 @@
+#!/bin/bash
+# calendly - A bash CLI for interacting with the Calendly API
+# Version: 0.1.0
+
+set -e
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Source library files
+source "$SCRIPT_DIR/lib/api.sh"
+source "$SCRIPT_DIR/lib/auth.sh"
+
+# Version
+VERSION="0.1.0"
+
+# Check for required dependencies
+check_dependencies() {
+    local missing=()
+    
+    if ! command -v curl &>/dev/null; then
+        missing+=("curl")
+    fi
+    
+    if ! command -v jq &>/dev/null; then
+        missing+=("jq")
+    fi
+    
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        echo "Error: Missing required dependencies: ${missing[*]}" >&2
+        echo "Please install them before using this CLI." >&2
+        exit 1
+    fi
+}
+
+# Display help message
+show_help() {
+    cat <<EOF
+calendly - Calendly CLI v${VERSION}
+
+A bash script for interacting with the Calendly API.
+
+USAGE:
+    calendly <command> [options]
+
+COMMANDS:
+    auth test       Test authentication by verifying API key
+    auth user       Show current user information
+    version         Show version information
+    help            Show this help message
+
+AUTHENTICATION:
+    Set your Calendly API key using one of these methods:
+    1. Environment variable: export CALENDLY_API_KEY="your_api_key"
+    2. Config file: echo "your_api_key" > ~/.calendly
+
+    Generate a Personal Access Token at:
+    https://calendly.com/integrations/api_webhooks
+
+EXAMPLES:
+    calendly auth test       # Verify your API key works
+    calendly auth user       # Display your user information
+
+EOF
+}
+
+# Show version
+show_version() {
+    echo "calendly version ${VERSION}"
+}
+
+# Auth commands
+cmd_auth() {
+    local subcommand="$1"
+    shift || true
+    
+    case "$subcommand" in
+        test)
+            echo "Testing authentication..."
+            if verify_auth; then
+                echo "✓ Authentication successful!"
+                local user_uri
+                user_uri=$(get_current_user_uri)
+                echo "  User URI: $user_uri"
+            else
+                echo "✗ Authentication failed"
+                exit 1
+            fi
+            ;;
+        user)
+            local response
+            response=$(calendly_api GET "/users/me")
+            echo "$response" | jq '.resource'
+            ;;
+        *)
+            echo "Unknown auth command: $subcommand" >&2
+            echo "Available commands: test, user" >&2
+            exit 1
+            ;;
+    esac
+}
+
+# Main entry point
+main() {
+    # Check dependencies first
+    check_dependencies
+    
+    # Parse command
+    local command="${1:-help}"
+    shift || true
+    
+    # Handle version and help without auth
+    case "$command" in
+        version|--version|-v)
+            show_version
+            exit 0
+            ;;
+        help|--help|-h)
+            show_help
+            exit 0
+            ;;
+    esac
+    
+    # Load API key for commands that need it
+    load_api_key || exit 1
+    
+    # Route to appropriate command handler
+    case "$command" in
+        auth)
+            cmd_auth "$@"
+            ;;
+        *)
+            echo "Unknown command: $command" >&2
+            echo "Run 'calendly help' for usage information." >&2
+            exit 1
+            ;;
+    esac
+}
+
+# Run main function
+main "$@"
