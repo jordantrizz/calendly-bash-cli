@@ -17,12 +17,15 @@ cmd_webhooks() {
         delete)
             webhooks_delete "$@"
             ;;
+        events)
+            webhooks_events "$@"
+            ;;
         ""|help)
             webhooks_help
             ;;
         *)
             log_error "Unknown webhooks command: $subcommand"
-            echo "Available commands: list, create, delete" >&2
+            echo "Available commands: list, create, delete, events" >&2
             exit 1
             ;;
     esac
@@ -41,18 +44,35 @@ COMMANDS:
     create --url URL --events EVENTS
                                 Create a new webhook subscription
     delete <uuid>               Delete a webhook subscription
+    events                      List available webhook event types
     help                        Show this help message
 
 OPTIONS for 'create':
     --url URL                   The webhook endpoint URL (required)
     --events EVENTS             Comma-separated list of events (required)
-                                Valid events: invitee.created, invitee.canceled,
-                                routing_form_submission.created
+                                Run 'calendly webhooks events' to see valid events
 
 EXAMPLES:
     calendly webhooks list
+    calendly webhooks events
     calendly webhooks create --url https://example.com/webhook --events invitee.created,invitee.canceled
     calendly webhooks delete abc123-def456
+
+EOF
+}
+
+# List available webhook event types
+webhooks_events() {
+    cat <<EOF
+Available webhook event types:
+
+  invitee.created                    - Triggered when a new invitee is created (someone books)
+  invitee.canceled                   - Triggered when an invitee cancels their booking
+  routing_form_submission.created    - Triggered when a routing form is submitted
+
+Usage with 'webhooks create':
+  calendly webhooks create --url https://example.com/hook --events invitee.created
+  calendly webhooks create --url https://example.com/hook --events invitee.created,invitee.canceled
 
 EOF
 }
@@ -81,11 +101,11 @@ webhooks_list() {
     debug "Using organization URI: $org_uri"
     debug "Using user URI: $user_uri"
     
-    # URL encode the URI parameters
+    # URL encode the URI parameters (use -n with echo to avoid trailing newline)
     local encoded_org_uri
-    encoded_org_uri=$(echo "$org_uri" | jq -sRr @uri)
+    encoded_org_uri=$(echo -n "$org_uri" | jq -sRr @uri)
     local encoded_user_uri
-    encoded_user_uri=$(echo "$user_uri" | jq -sRr @uri)
+    encoded_user_uri=$(echo -n "$user_uri" | jq -sRr @uri)
     
     # Fetch organization-scoped webhooks
     echo "Organization Webhooks:"
