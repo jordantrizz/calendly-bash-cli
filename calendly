@@ -1,6 +1,6 @@
 #!/bin/bash
 # calendly - A bash CLI for interacting with the Calendly API
-# Version: 0.2.0
+# Version: 0.2.1
 
 set -e
 
@@ -15,7 +15,7 @@ source "$SCRIPT_DIR/lib/events.sh"
 source "$SCRIPT_DIR/lib/webhooks.sh"
 
 # Version
-VERSION="0.2.0"
+VERSION="0.2.1"
 
 # Check for required dependencies
 check_dependencies() {

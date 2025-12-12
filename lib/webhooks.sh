@@ -58,7 +58,7 @@ EOF
 }
 
 # List webhook subscriptions
-# GET /webhook_subscriptions?organization=<org_uri>&scope=organization
+# Shows both organization-scoped and user-scoped webhooks
 webhooks_list() {
     debug "Fetching webhook subscriptions..."
     
@@ -70,17 +70,36 @@ webhooks_list() {
         return 1
     fi
     
-    debug "Using organization URI: $org_uri"
+    local user_uri
+    user_uri=$(get_current_user_uri)
     
-    # URL encode the organization URI parameter
+    if [[ -z "$user_uri" ]] || [[ "$user_uri" == "null" ]]; then
+        log_error "Failed to get current user URI"
+        return 1
+    fi
+    
+    debug "Using organization URI: $org_uri"
+    debug "Using user URI: $user_uri"
+    
+    # URL encode the URI parameters
     local encoded_org_uri
     encoded_org_uri=$(echo "$org_uri" | jq -sRr @uri)
+    local encoded_user_uri
+    encoded_user_uri=$(echo "$user_uri" | jq -sRr @uri)
     
-    local response
-    response=$(calendly_api GET "/webhook_subscriptions?organization=${encoded_org_uri}&scope=organization")
+    # Fetch organization-scoped webhooks
+    echo "Organization Webhooks:"
+    local org_response
+    org_response=$(calendly_api GET "/webhook_subscriptions?organization=${encoded_org_uri}&scope=organization")
+    echo "$org_response" | jq '.collection'
     
-    # Output the collection
-    echo "$response" | jq '.collection'
+    echo ""
+    
+    # Fetch user-scoped webhooks
+    echo "User Webhooks:"
+    local user_response
+    user_response=$(calendly_api GET "/webhook_subscriptions?organization=${encoded_org_uri}&user=${encoded_user_uri}&scope=user")
+    echo "$user_response" | jq '.collection'
 }
 
 # Create a webhook subscription

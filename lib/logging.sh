@@ -3,6 +3,7 @@
 
 # Color codes for terminal output
 CYAN='\033[0;36m'
+YELLOW='\033[0;33m'
 NC='\033[0m' # No Color
 
 # Debug levels:
@@ -129,7 +130,7 @@ log_error() {
 # Log warning message (always shown)
 # Usage: log_warn "message"
 log_warn() {
-    echo "[WARN] $*" >&2
+    echo -e "${YELLOW}[WARN]${NC} $*" >&2
 }
 
 # Check file permissions and warn if too open
